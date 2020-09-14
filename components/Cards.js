@@ -33,7 +33,7 @@ axios.get('https://lambda-times-api.herokuapp.com/topics').then(
 
                 topics.forEach((topic => {
                     response.data.articles[topic].forEach((article) => {
-                        cardContainer.appendChild(cardCreator(article));
+                        cardContainer.appendChild(cardCreator(article, topic));
                     });
                 }));
             }
@@ -51,9 +51,10 @@ axios.get('https://lambda-times-api.herokuapp.com/topics').then(
 
 
 
-const cardCreator = (article) => {
+const cardCreator = (article, topic) => {
     const card = document.createElement("div");
     card.classList.add("card");
+    card.classList.add(topic);
     card.addEventListener("click", () => {
         console.log(article.headline);
     });
