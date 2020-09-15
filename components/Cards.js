@@ -22,65 +22,67 @@
 // Use your function to create a card for each of the articles, and append each card to the DOM.
 
 const cardContainer = document.querySelector(".cards-container");
+const errorsContainer = document.querySelector(".errors-container");
 
-axios.get('https://lambda-times-api.herokuapp.com/topics').then(
-    (response) => {
-        const topics = response.data.topics;
-        topics[topics.indexOf("node.js")] = "node";
+function errorsCreator(err) {
+  const error = document.createElement("div");
+  error.textContent = err;
+  return error;
+}
 
-        axios.get("https://lambda-times-api.herokuapp.com/articles").then(
-            (response) => {
+axios
+  .get("https://lambda-times-api.herokuapp.com/topics")
+  .then((response) => {
+    const topics = response.data.topics;
+    topics[topics.indexOf("node.js")] = "node";
 
-                topics.forEach((topic => {
-                    response.data.articles[topic].forEach((article) => {
-                        cardContainer.appendChild(cardCreator(article, topic));
-                    });
-                }));
-            }
-        ).catch(
-            (err) => { console.log(err); }
-        );
-
-
-    }
-).catch((err) => {
-    console.log(err);
-});
-
-
-
-
+    axios
+      .get("https://lambda-times-api.herokuapp.com/articles")
+      .then((response) => {
+        topics.forEach((topic) => {
+          response.data.articles[topic].forEach((article) => {
+            cardContainer.appendChild(cardCreator(article, topic));
+          });
+        });
+      })
+      .catch((err) => {
+        errorsContainer.appendChild(errorsCreator(err));
+      });
+  })
+  .catch((err) => {
+    errorsContainer.appendChild(errorsCreator(err));
+  });
 
 const cardCreator = (article, topic) => {
-    const card = document.createElement("div");
-    card.classList.add("card");
-    card.classList.add(topic);
-    card.addEventListener("click", () => {
-        console.log(article.headline);
-    });
+  const card = document.createElement("div");
+  card.classList.add("card");
+  card.classList.add(topic);
+  card.addEventListener("click", () => {
+    console.log(article.headline);
+  });
 
-    const headline = document.createElement("div");
-    headline.classList.add("headline");
-    headline.textContent = article.headline;
-    card.appendChild(headline);
+  const headline = document.createElement("div");
+  headline.classList.add("headline");
+  headline.textContent = article.headline;
+  card.appendChild(headline);
 
-    const author = document.createElement("div");
-    author.classList.add("author");
+  const author = document.createElement("div");
+  author.classList.add("author");
 
-    const authorImgDiv = document.createElement("div");
-    authorImgDiv.classList.add("img-container");
+  const authorImgDiv = document.createElement("div");
+  authorImgDiv.classList.add("img-container");
 
-    const authorImg = document.createElement("img");
-    authorImg.src = article.authorPhoto;
-    authorImgDiv.appendChild(authorImg);
+  const authorImg = document.createElement("img");
+  authorImg.src = article.authorPhoto;
+  authorImgDiv.appendChild(authorImg);
 
-    author.appendChild(authorImgDiv);
+  author.appendChild(authorImgDiv);
 
-    const authorName = document.createElement("span");
-    authorName.textContent = article.authorName;
-    author.appendChild(authorName);
+  const authorName = document.createElement("span");
+  authorName.textContent = article.authorName;
+  author.appendChild(authorName);
 
-    card.appendChild(author);
+  card.appendChild(author);
 
-    return card;
-}
+  return card;
+};
